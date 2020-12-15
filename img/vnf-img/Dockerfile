@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 # install required packages
 RUN apt-get clean
 RUN apt-get update \
@@ -24,8 +24,8 @@ RUN apt-get update \
     vim
 
 
-COPY dhcpd.conf /etc/dhcp/dhcpd.conf
-COPY isc-dhcp-server /etc/default/isc-dhcp-server
+#COPY dhcpd.conf /etc/dhcp/dhcpd.conf
+#COPY isc-dhcp-server /etc/default/isc-dhcp-server
 
 #Install isc-dhcp-server
 #RUN apt-get update
