@@ -14,6 +14,7 @@ RUN apt-get update \
     curl \
     iptables \
     iputils-ping \
+    iproute2 \
     sudo \
     nano \
     bridge-utils \
