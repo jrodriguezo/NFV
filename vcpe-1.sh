@@ -1,4 +1,0 @@
-#!/bin/bash
-./vcpe_vyos.sh vcpe-1
-./vcpe_start.sh vcpe-1 10.255.0.1 10.255.0.2 192.168.255.1 10.2.3.1
-
