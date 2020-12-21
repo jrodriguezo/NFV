@@ -11,11 +11,17 @@ vcpe_start <vcpe_name> <vnf_vni> <vcpe_public_ip> <vcpe_private_ip>
         <vcpe_private_ip>: the public ip address for the vcpe  
 "
 
+if [[ $# -ne 3 ]]; then
+        echo ""       
+    echo "ERROR: incorrect number of parameters"
+    echo "$USAGE"
+    exit 1
+fi
+
 VNF1="mn.dc1_$1-1-ubuntu-1"
 VNF2="mn.dc1_$1-2-vyos-1"   # Nombre del docker VyOS. Obtener con “docker ps”
-VNI="$2"
-VCPEPUBLICIP="$3"
-VCPEPRIVATEIP="$4"
+VCPEPUBLICIP="$2"
+VCPEPRIVATEIP="$3"
 HNAME='vyos'
 
 REMOTEIP=`sudo docker exec -it $VNF1 hostname -I | tr " " "\n" | grep 192.168.100`
@@ -28,7 +34,7 @@ ifconfig eth0 down
 configure
 set system host-name $HNAME
 set interfaces vxlan vxlan1 address $VCPEPRIVATEIP/24
-set interfaces vxlan vxlan1 vni $VNI
+set interfaces vxlan vxlan1 vni 1
 set interfaces vxlan vxlan1 mtu 1400
 set interfaces vxlan vxlan1 remote $REMOTEIP
 set interfaces vxlan vxlan1 port 8472
