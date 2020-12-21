@@ -22,7 +22,8 @@ RUN apt-get update \
     tcpdump \
     openvswitch-switch \
     iperf3 \
-    vim
+    vim \
+    ryu-bin 
 
 
 #COPY dhcpd.conf /etc/dhcp/dhcpd.conf
