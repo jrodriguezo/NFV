@@ -82,13 +82,8 @@ SPAIN
         sleep 5
         ovs-vsctl add-br br0
         ovs-vsctl add-port br0 eth1
-
-        ip link add vxlan1 type vxlan id 0 remote 10.255.0.1 dstport 4789 dev eth2
-        ovs-vsctl add-port br0 vxlan1
-        ifconfig vxlan1 up
-        
-        <!--ovs-vsctl add-port br0 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=10.255.0.1-->
-        ovs-vsctl set bridge br0 protocols=OpenFlow13
+        ovs-vsctl add-port br0 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=10.255.0.1
+        ovs-vsctl set bridge br0 protocols=OpenFlow10,OpenFlow12,OpenFlow13
         ovs-vsctl set-fail-mode br0 secure
         ovs-vsctl set bridge br0 other-config:datapath-id=0000000000000001
         ovs-vsctl set-controller br0 tcp:10.250.0.22:6633
