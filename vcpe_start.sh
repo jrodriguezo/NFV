@@ -20,6 +20,7 @@ fi
 VNF1="mn.dc1_$1-1-ubuntu-1"
 VNF2="mn.dc1_$1-2-vyos-1"
 
+
 VNFTUNIP="$2"  
 HOMETUNIP="$3"
 
@@ -64,9 +65,23 @@ sudo docker exec -it $VNF1 ovs-vsctl set-controller br0 tcp:172.17.0.2:6633
 
 sudo docker exec -d $VNF1 /bin/bash -c "cd /usr/lib/python3/dist-packages && ryu-manager ryu.app.rest_qos ryu.app.qos_simple_switch_13 ryu.app.rest_conf_switch"
 
-sudo docker exec -it $VNF1 "curl -X PUT -d '"tcp:127.0.0.1:6632"' http://172.17.0.2:8080/v1.0/conf/switches/0000000000000001/ovsdb_addr"
-sudo docker exec -it $VNF1 "curl -X POST -d '{"port_name": "vxlan2", "type": "linux-htb", "max_rate": "12000000", "queues": [{"max_rate": "4000000"}, {"min_rate": "8000000"}]}' http://172.17.0.2:8080/qos/queue/0000000000000001"
-sudo docker exec -it $VNF1 "curl -X POST -d '{"match": {"nw_dst": "10.2.2.2", "nw_proto": "UDP", "tp_dst": "5002"}, "actions":{"queue": "1"}}' http://172.17.0.2:8080/qos/rules/0000000000000001"
-sudo docker exec -it $VNF1 "curl -X GET http://172.17.0.2:8080/qos/rules/0000000000000001"
+#antiguo
+
+#sudo docker exec -it $VNF1 curl -X PUT -d '"tcp:127.0.0.1:6632"' http://172.17.0.2:8080/v1.0/conf/switches/0000000000000001/ovsdb_addr
+#sudo docker exec -it $VNF1 curl -X POST -d '{"port_name": "vxlan2", "type": "linux-htb", "max_rate": "12000000", "queues": [{"max_rate": "4000000"}, {"min_rate": "8000000"}]}' http://172.17.0.2:8080/qos/queue/0000000000000001
+#sudo docker exec -it $VNF1 curl -X POST -d '{"match": {"nw_dst": "10.2.2.2", "nw_proto": "UDP", "tp_dst": "5002"}, "actions":{"queue": "1"}}' http://172.17.0.2:8080/qos/rules/0000000000000001
+#sudo docker exec -it $VNF1 curl -X GET http://172.17.0.2:8080/qos/rules/0000000000000001
+
+#nuevo
+
+#sudo docker exec -it $VNF1 curl -X PUT -d '"tcp:127.0.0.1:6632"' http://172.17.0.2:8080/v1.0/conf/switches/0000000000000001/ovsdb_addr
+#sudo docker exec -it $VNF1 curl -X POST -d '{"port_name": "vxlan2", "type": "linux-htb", "max_rate": "12000000", "queues": [{"max_rate": "4000000"}, {"min_rate": "8000000"}]}' http://172.17.0.2:8080/qos/queue/0000000000000001
+#sudo docker exec -it $VNF1 curl -X POST -d '{"match": {"nw_dst": "192.168.255.20", "nw_proto": "UDP", "tp_dst": "3000"}, "actions":{"queue": "1"}}' http://172.17.0.2:8080/qos/rules/0000000000000001
+#sudo docker exec -it $VNF1 curl -X GET http://172.17.0.2:8080/qos/rules/0000000000000001
+
+
+
+
+
 
 

@@ -1,8 +1,10 @@
 FROM ubuntu:bionic
+
+#geographic area
 ENV TZ=Europe/Kiev
-# install required packages
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+# install required packages
 RUN apt-get clean
 RUN apt-get update \
     && apt-get install -y  git \
