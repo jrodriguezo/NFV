@@ -1,5 +1,9 @@
 #!/bin/bash
 
+osm ns-create --ns_name vcpe-1 --nsd_name vCPE --vim_account emu-vim && echo "wait 30s" && sleep 30
+
+
+
 USAGE="
 Usage:
     
@@ -26,7 +30,6 @@ HOMETUNIP="$3"
 
 IP21=`sudo docker exec -it $VNF2 hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.100`
 ETH1=`sudo docker exec -it $VNF1 ifconfig | grep eth1 | awk '{print substr($1, 1, length($1)-1)}'` 
-#echo $ETH1
 
 ##################### VNF Setting #####################
 ## 0. Iniciar el Servicio OpenVirtualSwitch en cada VNF:
@@ -64,15 +67,6 @@ sudo docker exec -it $VNF1 ovs-vsctl set bridge br0 other-config:datapath-id=000
 sudo docker exec -it $VNF1 ovs-vsctl set-controller br0 tcp:172.17.0.2:6633
 
 sudo docker exec -d $VNF1 /bin/bash -c "cd /usr/lib/python3/dist-packages && ryu-manager ryu.app.rest_qos ryu.app.qos_simple_switch_13 ryu.app.rest_conf_switch"
-
-#antiguo
-
-#sudo docker exec -it $VNF1 curl -X PUT -d '"tcp:127.0.0.1:6632"' http://172.17.0.2:8080/v1.0/conf/switches/0000000000000001/ovsdb_addr
-#sudo docker exec -it $VNF1 curl -X POST -d '{"port_name": "vxlan2", "type": "linux-htb", "max_rate": "12000000", "queues": [{"max_rate": "4000000"}, {"min_rate": "8000000"}]}' http://172.17.0.2:8080/qos/queue/0000000000000001
-#sudo docker exec -it $VNF1 curl -X POST -d '{"match": {"nw_dst": "10.2.2.2", "nw_proto": "UDP", "tp_dst": "5002"}, "actions":{"queue": "1"}}' http://172.17.0.2:8080/qos/rules/0000000000000001
-#sudo docker exec -it $VNF1 curl -X GET http://172.17.0.2:8080/qos/rules/0000000000000001
-
-#nuevo
 
 #sudo docker exec -it $VNF1 curl -X PUT -d '"tcp:127.0.0.1:6632"' http://172.17.0.2:8080/v1.0/conf/switches/0000000000000001/ovsdb_addr
 #sudo docker exec -it $VNF1 curl -X POST -d '{"port_name": "vxlan2", "type": "linux-htb", "max_rate": "12000000", "queues": [{"max_rate": "4000000"}, {"min_rate": "8000000"}]}' http://172.17.0.2:8080/qos/queue/0000000000000001
