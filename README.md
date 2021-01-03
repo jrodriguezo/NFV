@@ -118,6 +118,18 @@ _Note: in a similar way it would be in other environments_
 ## Testing QoS with Iperf
 To test the quality of the service, here are some examples.
 ## DownStream: from Vyos to hxx
+### Configuration
+Downlink capacity: 12 Mbps
+
+|Queue ID|Max rate  |Min rate  |
+|--------|----------|----------|
+|0       |4 Mbps    |-         |
+|1       |-         |8 Mbps    |
+
+|(Priority)|Destination address|Destination port|Protocol|Queue ID|(QoS ID)|
+|----------|------------------------|----------------|--------|--------|--------|
+|1         |192.168.255.20 (hx1)    |3000            |UDP     |1       |1       |
+
 ### Test 1
 from hx1:
 ```sh
@@ -137,6 +149,18 @@ from hx2:
 iperf -c 192.168.255.21 -p 3000 -u -b 12M -l 1200 
 ```
 ## UpStream: from hxx to Vyos
+### Configuration
+Uplink capacity: 6 Mbps
+
+|Queue ID|Max rate  |Min rate  |
+|--------|----------|----------|
+|0       |2 Mbps    |-         |
+|1       |-         |2 Mbps    |
+
+|(Priority)|Source address|Destination port|Protocol|Queue ID|(QoS ID)|
+|----------|------------------------|----------------|--------|--------|--------|
+|1         |192.168.255.20 (hx1)    |7000            |UDP     |1       |1       |
+
 ### Test 1
 from hxx:
 ```sh
@@ -146,6 +170,9 @@ from hxx:
 ```sh
  iperf -c 192.168.255.1 -p 7000 -u -b 12M -l 1200 
 ```
+
+ _Note: To access any machine console, log in with root/xxxx_
+ 
 ## Contributors
 
 Thanks to:
