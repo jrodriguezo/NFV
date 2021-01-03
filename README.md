@@ -87,7 +87,7 @@ _Note: in a similar way it would be in other environments_
    ```sh
    ./vcpe.sh
    ```
-   _Note: if during execution you see a 'permission denied' message, you must give permission to the file by 'sudo chmod +x <file>'_
+   _Note: if during execution you see a 'permission denied' message, you must give permission to the file by 'sudo chmod +x <_file>'_
    
 ### Uninstall or destroy
 
@@ -96,7 +96,7 @@ _Note: in a similar way it would be in other environments_
    ```sh
    ./destroyall.sh
    ```
-   _Note: if during execution you see a 'permission denied' message, you must give permission to the file by 'sudo chmod +x <file>'_
+   _Note: if during execution you see a 'permission denied' message, you must give permission to the file by 'sudo chmod +x <_file>'_
    
    
 ### Unexpected failures
@@ -110,11 +110,42 @@ _Note: in a similar way it would be in other environments_
     ```sh
    sudo rm -rf /root/
    ```
-* if the quality setting is not as expected, re-run the script associated with it
+* If the quality setting is not as expected, re-run the script associated with it
     ```sh
    ./qos.sh
    ```
    
+## Testing QoS with Iperf
+To test the quality of the service, here are some examples.
+## DownStream: from Vyos to hxx
+### Test 1
+from hx1:
+```sh
+ iperf -s -u -i 1 -p 3000
+```
+ from vyos (docker exec -ti mn.dc1_vcpe-1-2-vyos-1 bash -c 'su - vyos'):
+```sh
+ iperf -c 192.168.255.20 -p 3000 -u -b 12M -l 1200 
+```
+### Test 2
+from hx2: 
+```sh
+ iperf -s -u -i 1 -p 3000
+```
+ from vyos (docker exec -ti mn.dc1_vcpe-1-2-vyos-1 bash -c 'su - vyos'):
+```sh
+iperf -c 192.168.255.21 -p 3000 -u -b 12M -l 1200 
+```
+## UpStream: from hxx to Vyos
+### Test 1
+from hxx:
+```sh
+ iperf -s -u -i 1 -p 7000
+```
+ from vyos (docker exec -ti mn.dc1_vcpe-1-2-vyos-1 bash -c 'su - vyos'):
+```sh
+ iperf -c 192.168.255.1 -p 7000 -u -b 12M -l 1200 
+```
 ## Contributors
 
 Thanks to:
