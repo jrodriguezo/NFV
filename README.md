@@ -3,10 +3,22 @@
 
 <br/><br/><br/>
 
-# Residential Network Virtualised with OSM
-> 
+# Virtualized Residential Networks with OSM
+> Conversion of local exchanges into data centers that allow, among other things, to replace network services offered by specific and proprietary hardware with network services defined by software on general-purpose hardware.
 
 ## About The Project
+
+It simulates a two residential networks each composed of two computers which through a bridge controlled by Ryu from the VNF vClass for upstream traffic.
+
+The bridge is connected through a VXLAN tunnel to the docker containers managed by OSM. The dockers simulate different network functions. One acts as a Ryu controller for downstream traffic while the other acts as a router implemented by Vyos. In turn, both are interconnected via a VXLAN tunnel.
+
+Private network traffic is acquired via DHCP and a NAT is made for outgoing traffic to the Internet.
+
+To start the scenario, several scripts are executed that manage the creation of two VNX networks, the use of OSM as a docker container orchestrator and the configuration of the containers themselves.
+
+## About The Scripts
+
+
 
 ## Getting Started
 
@@ -18,7 +30,7 @@ The following components are necessary for the execution of the application:
 * [VirtualBox](https://www.virtualbox.org/) (v6.1 tested)
 * [OVA-VNXSDNNFVLAB2020-v5](http://idefix.dit.upm.es/download/vnx/vnx-vm/VNXSDNNFVLAB2020-v5.ova)
 
-_Note: in a similar way it would be in OS and Linux environments_
+_Note: in a similar way it would be in other environments_
 
 ### Installation
 
@@ -27,23 +39,86 @@ _Note: in a similar way it would be in OS and Linux environments_
    ```
    git clone https://github.com/jrodriguezo/NFV.git
    ```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_Note: you can download the repository as .zip_ 
+   _Note: you can download the repository as .zip_ 
 
-2. Move to the NFV/ directory.
+2. Access from a browser (e.g. Mozilla Firefox) to the address 127.0.0.1 and log-in with admin/admin (the password is pre-configured).
 
+   _Note: Do not use localhost, it may not work because it is not properly configured in /etc/hosts_
+
+      * Insert in the 'NS Packages' section the package that is inside NFV/pck called ns-vcpe.tar.gz
+
+      * Insert in the 'VNF Packages' section the packages that are inside NFV/pck called vnf-vclass.tar.gz and vnf-vcpe-vyos.tar.gz
+
+3. Build the docker images: vnf-img and vnf-vyos.
+
+   ```
+   cd img/vnf-img/ && sudo docker build -t vnf-img .
+   ```
+   ```
+   cd img/vnf-vyos/ && sudo docker build -t vnf-vyos .
+   ```
+
+4. Go to the directory NFV/ where we will execute a series of commands.
    ```sh
    cd NFV/
    ```
-3. Run 
+
+5. Create the AccessNet and ExtNet ovs by typing the follow command:
 
    ```sh
    ./init.sh
    ```
-5. Finally visit the following URL to access web application: 
-   <br> http://localhost:5000/flights/delays/predict_kafka </br>
+   _Note1: If you get a 'permission denied' message, run 'sudo chmod +x init.sh'_
+   _Note2: Run 'sudo ovs-vsctl show' to check if it was created correctly_
+   
+6. Check OSM and vim-emu status:
 
+   ```sh
+   osm-check-vimemu
+   ```
+   If the previous command does not show Status: ENABLED restart the environment with 
+   ```sh
+   osm-restart-vimemu
+   ```
+   This will take some time, check after a while (about two minutes) the previous command and check that vim-emu and OSM are started, and that the VIM called 'emu-vim' is correctly registered in OSM.
+   
+7. Run the script that displays the entire scenario.:
+
+   ```sh
+   ./vcpe.sh
+   ```
+   _Note: if during execution you see a 'permission denied' message, you must give permission to the file by 'sudo chmod +x <file>'_
+   
+### Uninstall or destroy
+
+* If you want to close or destroy the entire scenario run:
+
+   ```sh
+   ./destroyall.sh
+   ```
+   _Note: if during execution you see a 'permission denied' message, you must give permission to the file by 'sudo chmod +x <file>'_
+   
+   
+### Unexpected failures
+
+* If it is not possible to create the VNX scenario using 
+
+   ```sh
+   sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -t
+   ```
+   delete the following directory and run it again
+    ```sh
+   sudo rm -rf /root/
+   ```
+* if the quality setting is not as expected, re-run the script associated with it
+    ```sh
+   ./qos.sh
+   ```
+   
 ## Contributors
 
 Thanks to:
-- [@ecalatayudc](https://github.com/ecalatayudc)
 - [@jrodriguezo](https://github.com/jrodriguezo)
+- [@ecalatayudc](https://github.com/ecalatayudc)
+- [@xxliu95](https://github.com/xxliu95)
+
