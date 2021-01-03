@@ -1,6 +1,6 @@
 #!/bin/bash
 
-osm ns-create --ns_name vcpe-1 --nsd_name vCPE --vim_account emu-vim && echo "Initializing, wait 30s" && sleep 30
+osm ns-create --ns_name $1 --nsd_name vCPE --vim_account emu-vim && echo "Initializing, wait 30s" && sleep 30
 
 USAGE="
 Usage:
@@ -26,7 +26,8 @@ VNFTUNIP="$2"
 HOMETUNIP="$3"
 
 IP21=`sudo docker exec -it $VNF2 hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.100`
-ETH1=`sudo docker exec -it $VNF1 ifconfig | grep eth1 | awk '{print substr($1, 1, length($1)-1)}'` 
+ETH1=`sudo docker exec -it $VNF1 ifconfig | grep eth1 | awk '{print substr($1, 1, length($1)-1)}'`
+ETH0=`sudo docker exec -it $VNF1 ifconfig eth0 | grep "inet " | awk '{print $2}'` 
 
 ##################### VNF Setting #####################
 ## 0. Iniciar el Servicio OpenVirtualSwitch en cada VNF:
@@ -59,6 +60,6 @@ echo "--Configuring QoS..."
 sudo docker exec -it $VNF1 ovs-vsctl set Bridge br0 protocols=OpenFlow13
 sudo docker exec -it $VNF1 ovs-vsctl set-manager ptcp:6632
 sudo docker exec -it $VNF1 ovs-vsctl set bridge br0 other-config:datapath-id=0000000000000001
-sudo docker exec -it $VNF1 ovs-vsctl set-controller br0 tcp:172.17.0.2:6633
+sudo docker exec -it $VNF1 ovs-vsctl set-controller br0 tcp:$ETH0:6633
 
 sudo docker exec -d $VNF1 /bin/bash -c "cd /usr/lib/python3/dist-packages && ryu-manager ryu.app.rest_qos ryu.app.qos_simple_switch_13 ryu.app.rest_conf_switch"
