@@ -17,8 +17,20 @@ Private network traffic is acquired via DHCP and a NAT is made for outgoing traf
 To start the scenario, several scripts are executed that manage the creation of two VNX networks, the use of OSM as a docker container orchestrator and the configuration of the containers themselves.
 
 ## About The Scripts
+Explained in order of execution:
+* **vcpe.sh**: This script puts the entire system into operation. It configures the VNF vClass and vCPE (Vyos), starts the scenarios, runs the dhclient on the hosts (to get IP) and configures the QoS.
 
+* **vcpe_start.sh**: This script is in charge of configuring the VNF vClass. It is in charge of creating an OSM instance. Then the OVS is initialized and the veth0 port is added to connect the VNF to the AccessNet. Once this is done, the br0 switch is created where the vxlan1 and vxlan2 ports are added (for the tunnels of its ends with the residential and Vyos networks respectively) and the necessary configurations are made to be able to perform QoS on the switch.
 
+* **vcpe_vyos.sh**: In this script is where the configurations are made regarding the VXLAN tunnel that connects to vClass, DHCP, NAT and routing. The eth2 port is added to output the container to the internet. Inside the Vyos the different configurations are added (set command), the first thing that is done is to disable the eth0 interface so that it does not use it by default as routing, since then we will put the static route that we are interested in. Then, and in order, the VXLAN is configured by adding IP addressing, the VNI, the MTU, the address that connects with vClass and a port. Later, we give address to eth2, we add the static route to give exit to internet (or any address) assigning as next jump the GW of the router R1. Then, NAT is performed where any IP address within the 192.168.255.0/24 subnet (internal interface) will be output on the eth2 (external interface). Finally, we perform the DHCP where the range assigned goes from 192.168.255.20 to 192.168.255.30. To save the changes you must execute the commit and save.
+
+* **qos.sh**: This script configures both the upstream and downstream qualities for both residential networks. This is done using the REST API provided by Ryu. The structure of each one is composed of four curls:
+   * PUT sets the ovsdb_addr to access OVSDB.
+   * POST executes the queue configuration.
+   * POST installs the input stream to the switch.
+   * GET checks the contents of the switch configuration.
+
+* **destroyall.sh**: To destroy the entire scenario, first the VNX instances are destroyed and then the VCPEs of the two residential networks.
 
 ## Getting Started
 
